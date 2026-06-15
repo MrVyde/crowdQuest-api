@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["crowdquest"]
+}
+
+model GameImage {
+  id          String      @id @default(cuid())
+
+  title       String      @unique
+  imageUrl    String
+  characters  Character[]
+  sessions    GameSession[]
+
+  createdAt   DateTime    @default(now())
+
+  @@schema("crowdquest")
+}
+
+model Character {
+  id              String           @id @default(cuid())
+  name            String
+  thumbnailUrl    String
+
+  minX            Float
+  maxX            Float
+  minY            Float
+  maxY            Float
+
+  imageId         String
+  image           GameImage        @relation(fields: [imageId], references: [id])
+
+  foundCharacters FoundCharacter[]
+
+  createdAt       DateTime         @default(now())
+  @@unique([imageId, name])
+
+  @@schema("crowdquest")
+}
+
+model GameSession {
+  id           String   @id @default(cuid())
+
+  imageId      String
+  image        GameImage @relation(fields: [imageId], references: [id])
+
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+
+  scoreMs      Int?
+
+  leaderboardEntry LeaderboardEntry?
+
+  foundCharacters FoundCharacter[]
+
+  @@schema("crowdquest")
+}
+
+model FoundCharacter {
+  id           String       @id @default(cuid())
+
+  sessionId    String
+  characterId  String
+
+  session       GameSession @relation(fields: [sessionId], references: [id])
+  character     Character   @relation(fields: [characterId], references: [id])
+
+  foundAt      DateTime @default(now())
+
+  @@unique([sessionId, characterId])
+
+  @@index([sessionId])
+  @@index([characterId])
+
+  @@schema("crowdquest")
+}
+
+model LeaderboardEntry {
+  id          String      @id @default(cuid())
+
+  playerName  String
+  scoreMs     Int
+
+  sessionId   String      @unique
+  session     GameSession @relation(fields: [sessionId], references: [id])
+
+  createdAt   DateTime @default(now())
+
+  @@index([scoreMs])
+
+  @@schema("crowdquest")
+}
