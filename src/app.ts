@@ -12,7 +12,7 @@ const app = express();
 // Route
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://crowd-quest.vercel.app"],
     credentials: true,
   })
 );
