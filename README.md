@@ -115,6 +115,7 @@ NEXT_PUBLIC_API_URL=
 ## Related Projects
 
 * Frontend: https://github.com/MrVyde/crowd-quest
+* [Live Application](https://crowd-quest.vercel.app)
 
 ## Roadmap
 
